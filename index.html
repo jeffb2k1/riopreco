@@ -4,74 +4,53 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>RioPreço — Comparador de Supermercados RJ</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f4f4f2; color: #1a1a1a; }
-
-    /* NAV */
     nav { background: #fff; border-bottom: 1px solid #e5e5e5; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
-    .logo { font-size: 20px; font-weight: 600; color: #1a1a1a; }
+    .logo { font-size: 20px; font-weight: 600; }
     .logo span { color: #1D9E75; }
     .nav-tabs { display: flex; gap: 4px; flex-wrap: wrap; }
     .tab { font-size: 13px; padding: 7px 16px; border-radius: 8px; border: 1px solid transparent; color: #666; cursor: pointer; background: none; }
     .tab.active { background: #f0f0ee; border-color: #ddd; color: #1a1a1a; font-weight: 500; }
     .tab:hover:not(.active) { background: #f9f9f7; }
-
-    /* SEARCH */
     .search-bar { display: flex; gap: 10px; padding: 14px 20px; background: #eaeae8; border-bottom: 1px solid #ddd; }
-    .search-bar input { flex: 1; padding: 9px 14px; border-radius: 8px; border: 1px solid #ccc; background: #fff; font-size: 14px; color: #1a1a1a; }
+    .search-bar input { flex: 1; padding: 9px 14px; border-radius: 8px; border: 1px solid #ccc; background: #fff; font-size: 14px; }
     .search-bar input:focus { outline: none; border-color: #1D9E75; }
     .search-bar button { padding: 9px 22px; border-radius: 8px; border: none; background: #1D9E75; color: #fff; font-size: 14px; cursor: pointer; font-weight: 500; }
-    .search-bar button:hover { background: #0F6E56; }
-
-    /* MAIN */
     .main { max-width: 860px; margin: 24px auto; padding: 0 16px; }
-
-    /* STATS */
     .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
     .stat-card { background: #fff; border-radius: 10px; border: 1px solid #e5e5e5; padding: 14px; text-align: center; }
-    .stat-val { font-size: 24px; font-weight: 600; color: #1a1a1a; }
+    .stat-val { font-size: 24px; font-weight: 600; }
     .stat-lbl { font-size: 12px; color: #888; margin-top: 3px; }
-
-    /* CARD */
     .card { background: #fff; border-radius: 12px; border: 1px solid #e5e5e5; padding: 20px; margin-bottom: 16px; }
     .section-title { font-size: 12px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 14px; }
-
-    /* PRODUCT SELECTOR */
     .product-selector { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
     .product-btn { font-size: 13px; padding: 6px 14px; border-radius: 8px; border: 1px solid #ddd; background: none; color: #666; cursor: pointer; }
     .product-btn.active { background: #E1F5EE; color: #0F6E56; border-color: #5DCAA5; font-weight: 500; }
-    .product-btn:hover:not(.active) { background: #f5f5f3; }
-
-    /* RANKING */
     .ranking-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid #f0f0ee; }
     .ranking-item:last-child { border-bottom: none; padding-bottom: 0; }
     .rank-num { font-size: 20px; font-weight: 600; min-width: 30px; }
-    .gold { color: #BA7517; }
-    .silver { color: #888; }
-    .bronze { color: #993C1D; }
+    .gold { color: #BA7517; } .silver { color: #888; } .bronze { color: #993C1D; }
     .rank-info { flex: 1; }
-    .rank-market { font-size: 15px; font-weight: 500; color: #1a1a1a; display: flex; align-items: center; gap: 6px; }
+    .rank-market { font-size: 15px; font-weight: 500; display: flex; align-items: center; gap: 6px; }
     .rank-detail { font-size: 12px; color: #888; margin-top: 3px; }
     .rank-price { font-size: 18px; font-weight: 600; color: #0F6E56; }
     .badge { font-size: 11px; padding: 3px 8px; border-radius: 6px; }
     .badge-promo { background: #E1F5EE; color: #0F6E56; }
     .badge-atacado { background: #FAECE7; color: #993C1D; }
-
-    /* ENCARTES */
     .promo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
     .promo-card { background: #f9f9f7; border-radius: 10px; border: 1px solid #e5e5e5; padding: 14px; }
     .promo-market { font-size: 11px; color: #888; margin-bottom: 5px; }
-    .promo-product { font-size: 14px; font-weight: 500; color: #1a1a1a; margin-bottom: 8px; }
+    .promo-product { font-size: 14px; font-weight: 500; margin-bottom: 8px; }
     .promo-price { font-size: 20px; font-weight: 600; color: #1D9E75; }
     .promo-old { font-size: 12px; color: #aaa; text-decoration: line-through; margin-left: 6px; }
-
-    /* FLAGRANTE */
     .flag-item { display: flex; gap: 12px; align-items: flex-start; padding: 14px 0; border-bottom: 1px solid #f0f0ee; }
     .flag-item:last-child { border-bottom: none; }
     .flag-icon { width: 42px; height: 42px; border-radius: 10px; background: #f0f0ee; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
     .flag-info { flex: 1; }
-    .flag-product { font-size: 14px; font-weight: 500; color: #1a1a1a; }
+    .flag-product { font-size: 14px; font-weight: 500; }
     .flag-local { font-size: 12px; color: #888; margin-top: 3px; }
     .flag-time { font-size: 11px; color: #aaa; margin-top: 3px; }
     .flag-price { font-size: 18px; font-weight: 600; color: #1D9E75; white-space: nowrap; }
@@ -79,13 +58,21 @@
     .confirm-btn { font-size: 12px; padding: 4px 10px; border-radius: 6px; border: 1px solid #ddd; background: none; color: #555; cursor: pointer; }
     .confirm-btn:hover { background: #f0f0ee; }
     .flagrante-cta { width: 100%; margin-top: 16px; padding: 13px; border-radius: 10px; background: #E1F5EE; border: 1px solid #5DCAA5; color: #0F6E56; font-size: 14px; font-weight: 500; cursor: pointer; }
-    .flagrante-cta:hover { background: #c8eed e; }
-
-    /* HIDDEN */
     .section { display: none; }
     .section.active { display: block; }
+    .loading { text-align: center; color: #888; padding: 30px; font-size: 14px; }
 
-    /* MOBILE */
+    /* MODAL FLAGRANTE */
+    .modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 100; align-items: center; justify-content: center; }
+    .modal-bg.open { display: flex; }
+    .modal { background: #fff; border-radius: 14px; padding: 24px; width: 100%; max-width: 420px; margin: 16px; }
+    .modal h3 { font-size: 16px; font-weight: 600; margin-bottom: 16px; }
+    .modal label { font-size: 13px; color: #555; display: block; margin-bottom: 4px; margin-top: 12px; }
+    .modal input, .modal select { width: 100%; padding: 9px 12px; border-radius: 8px; border: 1px solid #ddd; font-size: 14px; }
+    .modal-btns { display: flex; gap: 8px; margin-top: 20px; }
+    .btn-cancel { flex: 1; padding: 10px; border-radius: 8px; border: 1px solid #ddd; background: none; cursor: pointer; font-size: 14px; }
+    .btn-send { flex: 2; padding: 10px; border-radius: 8px; border: none; background: #1D9E75; color: #fff; cursor: pointer; font-size: 14px; font-weight: 500; }
+
     @media (max-width: 600px) {
       .stats-row { grid-template-columns: repeat(2, 1fr); }
       nav { justify-content: center; }
@@ -114,21 +101,17 @@
   <!-- RANKING -->
   <div id="section-ranking" class="section active">
     <div class="stats-row">
-      <div class="stat-card"><div class="stat-val">5</div><div class="stat-lbl">Supermercados</div></div>
-      <div class="stat-card"><div class="stat-val">1.2k</div><div class="stat-lbl">Produtos</div></div>
-      <div class="stat-card"><div class="stat-val">847</div><div class="stat-lbl">Promoções ativas</div></div>
+      <div class="stat-card"><div class="stat-val" id="stat-mercados">—</div><div class="stat-lbl">Supermercados</div></div>
+      <div class="stat-card"><div class="stat-val" id="stat-produtos">—</div><div class="stat-lbl">Produtos</div></div>
+      <div class="stat-card"><div class="stat-val" id="stat-promos">—</div><div class="stat-lbl">Promoções ativas</div></div>
       <div class="stat-card"><div class="stat-val">RJ</div><div class="stat-lbl">Cobertura</div></div>
     </div>
     <div class="card">
       <div class="section-title">Ranking por produto</div>
-      <div class="product-selector">
-        <button class="product-btn active" onclick="selectProduct(this,'carne')">Paleta bovina</button>
-        <button class="product-btn" onclick="selectProduct(this,'peito')">Peito de frango</button>
-        <button class="product-btn" onclick="selectProduct(this,'arroz')">Arroz 5kg</button>
-        <button class="product-btn" onclick="selectProduct(this,'banana')">Banana prata</button>
-        <button class="product-btn" onclick="selectProduct(this,'leite')">Leite integral 1L</button>
+      <div class="product-selector" id="product-selector">
+        <div class="loading">Carregando produtos...</div>
       </div>
-      <div id="ranking-list"></div>
+      <div id="ranking-list"><div class="loading">Carregando preços...</div></div>
     </div>
   </div>
 
@@ -136,13 +119,8 @@
   <div id="section-encartes" class="section">
     <div class="card">
       <div class="section-title">Promoções da semana</div>
-      <div class="promo-grid">
-        <div class="promo-card"><div class="promo-market">Guanabara — válido até domingo</div><div class="promo-product">Peito de frango kg</div><div><span class="promo-price">R$ 11,90</span><span class="promo-old">R$ 15,90</span></div></div>
-        <div class="promo-card"><div class="promo-market">Extra — válido até sábado</div><div class="promo-product">Arroz tipo 1 — 5kg</div><div><span class="promo-price">R$ 22,90</span><span class="promo-old">R$ 28,90</span></div></div>
-        <div class="promo-card"><div class="promo-market">Prezunic — válido até sexta</div><div class="promo-product">Óleo de soja 900ml</div><div><span class="promo-price">R$ 5,49</span><span class="promo-old">R$ 7,99</span></div></div>
-        <div class="promo-card"><div class="promo-market">Mundial — válido até domingo</div><div class="promo-product">Leite integral cx 1L</div><div><span class="promo-price">R$ 4,29</span><span class="promo-old">R$ 5,49</span></div></div>
-        <div class="promo-card"><div class="promo-market">Assaí — oferta da semana</div><div class="promo-product">Feijão carioca 1kg</div><div><span class="promo-price">R$ 6,90</span><span class="promo-old">R$ 9,90</span></div></div>
-        <div class="promo-card"><div class="promo-market">Guanabara — válido até domingo</div><div class="promo-product">Banana prata kg</div><div><span class="promo-price">R$ 3,49</span><span class="promo-old">R$ 5,99</span></div></div>
+      <div class="promo-grid" id="promo-grid">
+        <div class="loading">Carregando promoções...</div>
       </div>
     </div>
   </div>
@@ -151,107 +129,184 @@
   <div id="section-flagrante" class="section">
     <div class="card">
       <div class="section-title">Flagrante de oferta — últimas 24h</div>
-      <div class="flag-item">
-        <div class="flag-icon">🍺</div>
-        <div class="flag-info">
-          <div class="flag-product">Cerveja Sul Americana 473ml</div>
-          <div class="flag-local">Extra — Tijuca (Conde de Bonfim)</div>
-          <div class="flag-time">há 23 min · por Carlos M.</div>
-          <div class="confirm-row">
-            <button class="confirm-btn" onclick="confirmar(this)">Ainda tá assim! (14)</button>
-            <button class="confirm-btn" onclick="acabou(this)">Acabou (2)</button>
-          </div>
-        </div>
-        <div class="flag-price">R$ 2,99</div>
-      </div>
-      <div class="flag-item">
-        <div class="flag-icon">🍪</div>
-        <div class="flag-info">
-          <div class="flag-product">Biscoito Vitarella 400g</div>
-          <div class="flag-local">Guanabara — Méier (R. Dias da Cruz)</div>
-          <div class="flag-time">há 1h · por Ana P.</div>
-          <div class="confirm-row">
-            <button class="confirm-btn" onclick="confirmar(this)">Ainda tá assim! (8)</button>
-            <button class="confirm-btn" onclick="acabou(this)">Acabou (0)</button>
-          </div>
-        </div>
-        <div class="flag-price">R$ 1,99</div>
-      </div>
-      <div class="flag-item">
-        <div class="flag-icon">🧴</div>
-        <div class="flag-info">
-          <div class="flag-product">Amaciante Comfort 2L</div>
-          <div class="flag-local">Prezunic — Botafogo</div>
-          <div class="flag-time">há 3h · por Roberto S.</div>
-          <div class="confirm-row">
-            <button class="confirm-btn" onclick="confirmar(this)">Ainda tá assim! (5)</button>
-            <button class="confirm-btn" onclick="acabou(this)">Acabou (3)</button>
-          </div>
-        </div>
-        <div class="flag-price">R$ 8,90</div>
-      </div>
-      <button class="flagrante-cta">+ Flagrar uma oferta</button>
+      <div id="flag-feed"><div class="loading">Carregando flagrantes...</div></div>
+      <button class="flagrante-cta" onclick="abrirModal()">📸 Flagrar uma oferta</button>
     </div>
   </div>
 
 </div>
 
-<script>
-  const produtos = {
-    carne: [
-      {pos:'gold',num:'1',market:'Extra',badge:'badge-promo',badgeText:'Promoção',desc:'Paleta bovina kg — atualizado hoje',price:'R$ 29,90'},
-      {pos:'silver',num:'2',market:'Prezunic',badge:'',badgeText:'',desc:'Paleta bovina kg — atualizado hoje',price:'R$ 32,90'},
-      {pos:'bronze',num:'3',market:'Guanabara',badge:'',badgeText:'',desc:'Paleta bovina kg — atualizado ontem',price:'R$ 34,90'},
-      {pos:'',num:'4',market:'Mundial',badge:'',badgeText:'',desc:'Paleta bovina kg — atualizado ontem',price:'R$ 37,50'},
-      {pos:'',num:'5',market:'Assaí',badge:'badge-atacado',badgeText:'Atacado',desc:'Paleta bovina kg — mínimo 5kg',price:'R$ 24,90'},
-    ],
-    peito: [
-      {pos:'gold',num:'1',market:'Guanabara',badge:'badge-promo',badgeText:'Promoção',desc:'Peito de frango kg — atualizado hoje',price:'R$ 11,90'},
-      {pos:'silver',num:'2',market:'Mundial',badge:'',badgeText:'',desc:'Peito de frango kg — atualizado hoje',price:'R$ 13,50'},
-      {pos:'bronze',num:'3',market:'Extra',badge:'',badgeText:'',desc:'Peito de frango kg — atualizado ontem',price:'R$ 14,90'},
-      {pos:'',num:'4',market:'Prezunic',badge:'',badgeText:'',desc:'Peito de frango kg — atualizado ontem',price:'R$ 15,90'},
-      {pos:'',num:'5',market:'Assaí',badge:'badge-atacado',badgeText:'Atacado',desc:'Peito de frango kg — mínimo 5kg',price:'R$ 9,90'},
-    ],
-    arroz: [
-      {pos:'gold',num:'1',market:'Extra',badge:'badge-promo',badgeText:'Promoção',desc:'Arroz tipo 1 5kg — atualizado hoje',price:'R$ 22,90'},
-      {pos:'silver',num:'2',market:'Prezunic',badge:'',badgeText:'',desc:'Arroz tipo 1 5kg — atualizado hoje',price:'R$ 24,90'},
-      {pos:'bronze',num:'3',market:'Guanabara',badge:'',badgeText:'',desc:'Arroz tipo 1 5kg — atualizado ontem',price:'R$ 26,90'},
-      {pos:'',num:'4',market:'Mundial',badge:'',badgeText:'',desc:'Arroz tipo 1 5kg — atualizado ontem',price:'R$ 27,50'},
-      {pos:'',num:'5',market:'Assaí',badge:'badge-atacado',badgeText:'Atacado',desc:'Arroz tipo 1 5kg — fardo 30kg',price:'R$ 18,90'},
-    ],
-    banana: [
-      {pos:'gold',num:'1',market:'Guanabara',badge:'badge-promo',badgeText:'Promoção',desc:'Banana prata kg — atualizado hoje',price:'R$ 3,49'},
-      {pos:'silver',num:'2',market:'Mundial',badge:'',badgeText:'',desc:'Banana prata kg — atualizado hoje',price:'R$ 3,99'},
-      {pos:'bronze',num:'3',market:'Extra',badge:'',badgeText:'',desc:'Banana prata kg — atualizado ontem',price:'R$ 4,49'},
-      {pos:'',num:'4',market:'Prezunic',badge:'',badgeText:'',desc:'Banana prata kg — atualizado ontem',price:'R$ 4,99'},
-      {pos:'',num:'5',market:'Assaí',badge:'badge-atacado',badgeText:'Atacado',desc:'Banana prata kg — caixa 20kg',price:'R$ 2,99'},
-    ],
-    leite: [
-      {pos:'gold',num:'1',market:'Mundial',badge:'badge-promo',badgeText:'Promoção',desc:'Leite integral cx 1L — atualizado hoje',price:'R$ 4,29'},
-      {pos:'silver',num:'2',market:'Extra',badge:'',badgeText:'',desc:'Leite integral cx 1L — atualizado hoje',price:'R$ 4,79'},
-      {pos:'bronze',num:'3',market:'Prezunic',badge:'',badgeText:'',desc:'Leite integral cx 1L — atualizado ontem',price:'R$ 4,99'},
-      {pos:'',num:'4',market:'Guanabara',badge:'',badgeText:'',desc:'Leite integral cx 1L — atualizado ontem',price:'R$ 5,29'},
-      {pos:'',num:'5',market:'Assaí',badge:'badge-atacado',badgeText:'Atacado',desc:'Leite integral cx 1L — fardo 12un',price:'R$ 3,99'},
-    ],
-  };
+<!-- MODAL -->
+<div class="modal-bg" id="modal">
+  <div class="modal">
+    <h3>📸 Flagrar uma oferta</h3>
+    <label>Produto</label>
+    <input type="text" id="f-produto" placeholder="ex: Cerveja Sul Americana 473ml" />
+    <label>Supermercado</label>
+    <select id="f-mercado">
+      <option value="">Selecione...</option>
+      <option>Extra</option>
+      <option>Guanabara</option>
+      <option>Mundial</option>
+      <option>Prezunic</option>
+      <option>Assaí</option>
+    </select>
+    <label>Bairro</label>
+    <input type="text" id="f-bairro" placeholder="ex: Tijuca" />
+    <label>Endereço (opcional)</label>
+    <input type="text" id="f-endereco" placeholder="ex: Conde de Bonfim" />
+    <label>Preço (R$)</label>
+    <input type="number" id="f-preco" placeholder="ex: 2.99" step="0.01" />
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="fecharModal()">Cancelar</button>
+      <button class="btn-send" onclick="enviarFlagrante()">Enviar flagrante</button>
+    </div>
+  </div>
+</div>
 
-  function renderRanking(key) {
-    document.getElementById('ranking-list').innerHTML = produtos[key].map(p => `
-      <div class="ranking-item">
-        <div class="rank-num ${p.pos}">${p.num}</div>
-        <div class="rank-info">
-          <div class="rank-market">${p.market} ${p.badge ? '<span class="badge '+p.badge+'">'+p.badgeText+'</span>' : ''}</div>
-          <div class="rank-detail">${p.desc}</div>
-        </div>
-        <div class="rank-price">${p.price}</div>
-      </div>
-    `).join('');
+<script>
+  const SUPABASE_URL = 'https://hpeoyckeauayaobonbyi.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhwZW95Y2tlYXVheWFvYm9uYnlpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc2ODgxODUsImV4cCI6MjA5MzI2NDE4NX0.un2peLk0Q7bHKymZRQE4G9m3800TYU3GY9hK2FFDylA';
+  const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  let todosPrecos = [];
+  let todosProdutos = [];
+  let produtoAtivo = null;
+
+  async function init() {
+    await carregarStats();
+    await carregarProdutos();
+    await carregarPromos();
+    await carregarFlagrantes();
   }
 
-  function selectProduct(btn, key) {
+  async function carregarStats() {
+    const { data: mercados } = await db.from('supermercados').select('id');
+    const { data: produtos } = await db.from('produtos').select('id');
+    const { data: promos } = await db.from('precos').select('id').eq('em_promocao', true);
+    document.getElementById('stat-mercados').textContent = mercados?.length || 0;
+    document.getElementById('stat-produtos').textContent = produtos?.length || 0;
+    document.getElementById('stat-promos').textContent = promos?.length || 0;
+  }
+
+  async function carregarProdutos() {
+    const { data } = await db.from('produtos').select('*');
+    todosProdutos = data || [];
+    const sel = document.getElementById('product-selector');
+    sel.innerHTML = todosProdutos.map((p, i) =>
+      `<button class="product-btn ${i===0?'active':''}" onclick="selectProduct(this,${p.id})">${p.nome}</button>`
+    ).join('');
+    if (todosProdutos.length > 0) await carregarRanking(todosProdutos[0].id);
+  }
+
+  async function carregarRanking(produtoId) {
+    produtoAtivo = produtoId;
+    document.getElementById('ranking-list').innerHTML = '<div class="loading">Carregando preços...</div>';
+    const { data } = await db
+      .from('precos')
+      .select('preco, em_promocao, atualizado_em, supermercados(nome)')
+      .eq('produto_id', produtoId)
+      .order('preco', { ascending: true });
+
+    const medalhas = ['gold','silver','bronze','',''];
+    const produto = todosProdutos.find(p => p.id === produtoId);
+    document.getElementById('ranking-list').innerHTML = (data||[]).map((item, i) => {
+      const atualizado = new Date(item.atualizado_em);
+      const hoje = new Date();
+      const diff = Math.floor((hoje - atualizado) / 86400000);
+      const quando = diff === 0 ? 'atualizado hoje' : diff === 1 ? 'atualizado ontem' : `há ${diff} dias`;
+      const atacado = item.supermercados.nome === 'Assaí';
+      return `
+        <div class="ranking-item">
+          <div class="rank-num ${medalhas[i]||''}">${i+1}</div>
+          <div class="rank-info">
+            <div class="rank-market">${item.supermercados.nome}
+              ${item.em_promocao ? '<span class="badge badge-promo">Promoção</span>' : ''}
+              ${atacado ? '<span class="badge badge-atacado">Atacado</span>' : ''}
+            </div>
+            <div class="rank-detail">${produto?.nome} ${produto?.unidade||''} — ${quando}</div>
+          </div>
+          <div class="rank-price">R$ ${Number(item.preco).toFixed(2).replace('.',',')}</div>
+        </div>`;
+    }).join('') || '<div class="loading">Nenhum preço encontrado.</div>';
+  }
+
+  async function selectProduct(btn, id) {
     document.querySelectorAll('.product-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    renderRanking(key);
+    await carregarRanking(id);
+  }
+
+  async function carregarPromos() {
+    const { data } = await db
+      .from('precos')
+      .select('preco, produtos(nome, unidade), supermercados(nome)')
+      .eq('em_promocao', true);
+    document.getElementById('promo-grid').innerHTML = (data||[]).map(item => `
+      <div class="promo-card">
+        <div class="promo-market">${item.supermercados.nome}</div>
+        <div class="promo-product">${item.produtos.nome} ${item.produtos.unidade||''}</div>
+        <div><span class="promo-price">R$ ${Number(item.preco).toFixed(2).replace('.',',')}</span></div>
+      </div>`).join('') || '<div class="loading">Nenhuma promoção ativa.</div>';
+  }
+
+  async function carregarFlagrantes() {
+    const { data } = await db
+      .from('flagrantes')
+      .select('*')
+      .order('criado_em', { ascending: false })
+      .limit(20);
+    const emojis = ['🍺','🍪','🧴','🥩','🍗','🧀','🍎','🧹','☕'];
+    const agora = new Date();
+    document.getElementById('flag-feed').innerHTML = (data||[]).map(f => {
+      const diff = Math.floor((agora - new Date(f.criado_em)) / 60000);
+      const tempo = diff < 60 ? `há ${diff} min` : `há ${Math.floor(diff/60)}h`;
+      const emoji = emojis[Math.floor(Math.random()*emojis.length)];
+      return `
+        <div class="flag-item">
+          <div class="flag-icon">${emoji}</div>
+          <div class="flag-info">
+            <div class="flag-product">${f.produto_nome}</div>
+            <div class="flag-local">${f.supermercado} — ${f.bairro}${f.endereco?' ('+f.endereco+')':''}</div>
+            <div class="flag-time">${tempo}</div>
+            <div class="confirm-row">
+              <button class="confirm-btn" onclick="confirmar(${f.id}, 'confirmacoes', this)">Ainda tá assim! (${f.confirmacoes})</button>
+              <button class="confirm-btn" onclick="confirmar(${f.id}, 'acabou', this)">Acabou (${f.acabou})</button>
+            </div>
+          </div>
+          <div class="flag-price">R$ ${Number(f.preco).toFixed(2).replace('.',',')}</div>
+        </div>`;
+    }).join('') || '<div class="loading">Nenhum flagrante ainda. Seja o primeiro!</div>';
+  }
+
+  async function confirmar(id, campo, btn) {
+    const m = btn.textContent.match(/\((\d+)\)/);
+    const atual = m ? parseInt(m[1]) : 0;
+    await db.from('flagrantes').update({ [campo]: atual + 1 }).eq('id', id);
+    btn.textContent = btn.textContent.replace('('+atual+')', '('+(atual+1)+')');
+  }
+
+  function abrirModal() { document.getElementById('modal').classList.add('open'); }
+  function fecharModal() { document.getElementById('modal').classList.remove('open'); }
+
+  async function enviarFlagrante() {
+    const produto = document.getElementById('f-produto').value.trim();
+    const mercado = document.getElementById('f-mercado').value;
+    const bairro = document.getElementById('f-bairro').value.trim();
+    const endereco = document.getElementById('f-endereco').value.trim();
+    const preco = parseFloat(document.getElementById('f-preco').value);
+    if (!produto || !mercado || !bairro || !preco) { alert('Preencha todos os campos obrigatórios!'); return; }
+    const { error } = await db.from('flagrantes').insert([{ produto_nome: produto, supermercado: mercado, bairro, endereco, preco }]);
+    if (error) { alert('Erro ao enviar. Tente novamente.'); return; }
+    fecharModal();
+    document.getElementById('f-produto').value = '';
+    document.getElementById('f-mercado').value = '';
+    document.getElementById('f-bairro').value = '';
+    document.getElementById('f-endereco').value = '';
+    document.getElementById('f-preco').value = '';
+    await carregarFlagrantes();
+    showSection('flagrante');
+    alert('Flagrante enviado! Obrigado! 🎉');
   }
 
   function showSection(name) {
@@ -262,23 +317,22 @@
     });
   }
 
-  function buscar() {
-    const v = document.getElementById('searchInput').value.trim();
+  async function buscar() {
+    const v = document.getElementById('searchInput').value.trim().toLowerCase();
     if (!v) return;
-    alert('Busca por "' + v + '" será integrada com o banco de dados na Fase 2!');
+    showSection('ranking');
+    const encontrado = todosProdutos.find(p => p.nome.toLowerCase().includes(v));
+    if (encontrado) {
+      document.querySelectorAll('.product-btn').forEach(b => {
+        b.classList.toggle('active', b.textContent.toLowerCase().includes(v));
+      });
+      await carregarRanking(encontrado.id);
+    } else {
+      document.getElementById('ranking-list').innerHTML = '<div class="loading">Produto não encontrado. Tente outro nome.</div>';
+    }
   }
 
-  function confirmar(btn) {
-    const m = btn.textContent.match(/\((\d+)\)/);
-    if (m) btn.textContent = btn.textContent.replace('('+m[1]+')', '('+(parseInt(m[1])+1)+')');
-  }
-
-  function acabou(btn) {
-    const m = btn.textContent.match(/\((\d+)\)/);
-    if (m) btn.textContent = btn.textContent.replace('('+m[1]+')', '('+(parseInt(m[1])+1)+')');
-  }
-
-  renderRanking('carne');
+  init();
 </script>
 </body>
 </html>
