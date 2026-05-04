@@ -8,17 +8,29 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f4f4f2; color: #1a1a1a; }
+
+    /* NAV */
     nav { background: #fff; border-bottom: 1px solid #e5e5e5; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
     .logo { font-size: 20px; font-weight: 600; }
     .logo span { color: #1D9E75; }
+    .nav-direita { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
     .nav-tabs { display: flex; gap: 4px; flex-wrap: wrap; }
     .tab { font-size: 13px; padding: 7px 16px; border-radius: 8px; border: 1px solid transparent; color: #666; cursor: pointer; background: none; }
     .tab.active { background: #f0f0ee; border-color: #ddd; color: #1a1a1a; font-weight: 500; }
     .tab:hover:not(.active) { background: #f9f9f7; }
+    .btn-login { font-size: 13px; padding: 7px 16px; border-radius: 8px; border: 1px solid #ddd; background: none; color: #666; cursor: pointer; }
+    .btn-login:hover { background: #f9f9f7; }
+    .btn-cadastrar { font-size: 13px; padding: 7px 16px; border-radius: 8px; border: none; background: #1D9E75; color: #fff; cursor: pointer; font-weight: 500; }
+    .usuario-info { font-size: 13px; color: #555; display: flex; align-items: center; gap: 10px; }
+    .btn-sair { font-size: 12px; padding: 5px 12px; border-radius: 8px; border: 1px solid #ddd; background: none; color: #888; cursor: pointer; }
+
+    /* SEARCH */
     .search-bar { display: flex; gap: 10px; padding: 14px 20px; background: #eaeae8; border-bottom: 1px solid #ddd; }
     .search-bar input { flex: 1; padding: 9px 14px; border-radius: 8px; border: 1px solid #ccc; background: #fff; font-size: 14px; }
     .search-bar input:focus { outline: none; border-color: #1D9E75; }
     .search-bar button { padding: 9px 22px; border-radius: 8px; border: none; background: #1D9E75; color: #fff; font-size: 14px; cursor: pointer; font-weight: 500; }
+
+    /* MAIN */
     .main { max-width: 860px; margin: 24px auto; padding: 0 16px; }
     .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
     .stat-card { background: #fff; border-radius: 10px; border: 1px solid #e5e5e5; padding: 14px; text-align: center; }
@@ -26,9 +38,13 @@
     .stat-lbl { font-size: 12px; color: #888; margin-top: 3px; }
     .card { background: #fff; border-radius: 12px; border: 1px solid #e5e5e5; padding: 20px; margin-bottom: 16px; }
     .section-title { font-size: 12px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 14px; }
+
+    /* PRODUTO */
     .product-selector { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
     .product-btn { font-size: 13px; padding: 6px 14px; border-radius: 8px; border: 1px solid #ddd; background: none; color: #666; cursor: pointer; }
     .product-btn.active { background: #E1F5EE; color: #0F6E56; border-color: #5DCAA5; font-weight: 500; }
+
+    /* RANKING */
     .ranking-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid #f0f0ee; }
     .ranking-item:last-child { border-bottom: none; padding-bottom: 0; }
     .rank-num { font-size: 20px; font-weight: 600; min-width: 30px; }
@@ -40,12 +56,15 @@
     .badge { font-size: 11px; padding: 3px 8px; border-radius: 6px; }
     .badge-promo { background: #E1F5EE; color: #0F6E56; }
     .badge-atacado { background: #FAECE7; color: #993C1D; }
+
+    /* ENCARTES */
     .promo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
     .promo-card { background: #f9f9f7; border-radius: 10px; border: 1px solid #e5e5e5; padding: 14px; }
     .promo-market { font-size: 11px; color: #888; margin-bottom: 5px; }
     .promo-product { font-size: 14px; font-weight: 500; margin-bottom: 8px; }
     .promo-price { font-size: 20px; font-weight: 600; color: #1D9E75; }
-    .promo-old { font-size: 12px; color: #aaa; text-decoration: line-through; margin-left: 6px; }
+
+    /* FLAGRANTE */
     .flag-item { display: flex; gap: 12px; align-items: flex-start; padding: 14px 0; border-bottom: 1px solid #f0f0ee; }
     .flag-item:last-child { border-bottom: none; }
     .flag-icon { width: 42px; height: 42px; border-radius: 10px; background: #f0f0ee; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
@@ -58,25 +77,34 @@
     .confirm-btn { font-size: 12px; padding: 4px 10px; border-radius: 6px; border: 1px solid #ddd; background: none; color: #555; cursor: pointer; }
     .confirm-btn:hover { background: #f0f0ee; }
     .flagrante-cta { width: 100%; margin-top: 16px; padding: 13px; border-radius: 10px; background: #E1F5EE; border: 1px solid #5DCAA5; color: #0F6E56; font-size: 14px; font-weight: 500; cursor: pointer; }
+
+    /* SECOES */
     .section { display: none; }
     .section.active { display: block; }
     .loading { text-align: center; color: #888; padding: 30px; font-size: 14px; }
 
-    /* MODAL FLAGRANTE */
+    /* MODAL GERAL */
     .modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 100; align-items: center; justify-content: center; }
     .modal-bg.open { display: flex; }
-    .modal { background: #fff; border-radius: 14px; padding: 24px; width: 100%; max-width: 420px; margin: 16px; }
-    .modal h3 { font-size: 16px; font-weight: 600; margin-bottom: 16px; }
+    .modal { background: #fff; border-radius: 14px; padding: 24px; width: 100%; max-width: 400px; margin: 16px; }
+    .modal h3 { font-size: 17px; font-weight: 600; margin-bottom: 6px; }
+    .modal p { font-size: 13px; color: #888; margin-bottom: 18px; }
     .modal label { font-size: 13px; color: #555; display: block; margin-bottom: 4px; margin-top: 12px; }
     .modal input, .modal select { width: 100%; padding: 9px 12px; border-radius: 8px; border: 1px solid #ddd; font-size: 14px; }
+    .modal input:focus, .modal select:focus { outline: none; border-color: #1D9E75; }
     .modal-btns { display: flex; gap: 8px; margin-top: 20px; }
-    .btn-cancel { flex: 1; padding: 10px; border-radius: 8px; border: 1px solid #ddd; background: none; cursor: pointer; font-size: 14px; }
-    .btn-send { flex: 2; padding: 10px; border-radius: 8px; border: none; background: #1D9E75; color: #fff; cursor: pointer; font-size: 14px; font-weight: 500; }
+    .btn-cancelar { flex: 1; padding: 10px; border-radius: 8px; border: 1px solid #ddd; background: none; cursor: pointer; font-size: 14px; }
+    .btn-enviar { flex: 2; padding: 10px; border-radius: 8px; border: none; background: #1D9E75; color: #fff; cursor: pointer; font-size: 14px; font-weight: 500; }
+    .troca-modal { text-align: center; margin-top: 14px; font-size: 13px; color: #888; }
+    .troca-modal a { color: #1D9E75; cursor: pointer; text-decoration: none; font-weight: 500; }
+    .erro-msg { background: #FAECE7; color: #993C1D; border-radius: 8px; padding: 10px 14px; font-size: 13px; margin-top: 12px; display: none; }
+    .sucesso-msg { background: #E1F5EE; color: #0F6E56; border-radius: 8px; padding: 10px 14px; font-size: 13px; margin-top: 12px; display: none; }
 
     @media (max-width: 600px) {
       .stats-row { grid-template-columns: repeat(2, 1fr); }
       nav { justify-content: center; }
       .logo { width: 100%; text-align: center; }
+      .nav-direita { justify-content: center; }
     }
   </style>
 </head>
@@ -84,10 +112,16 @@
 
 <nav>
   <div class="logo">Rio<span>Preço</span></div>
-  <div class="nav-tabs">
-    <button class="tab active" onclick="showSection('ranking')">Ranking</button>
-    <button class="tab" onclick="showSection('encartes')">Encartes</button>
-    <button class="tab" onclick="showSection('flagrante')">Flagrante de Oferta</button>
+  <div class="nav-direita">
+    <div class="nav-tabs">
+      <button class="tab active" onclick="mostrarSecao('ranking')">Ranking</button>
+      <button class="tab" onclick="mostrarSecao('encartes')">Encartes</button>
+      <button class="tab" onclick="mostrarSecao('flagrante')">Flagrante de Oferta</button>
+    </div>
+    <div id="area-usuario">
+      <button class="btn-login" onclick="abrirLogin()">Entrar</button>
+      <button class="btn-cadastrar" onclick="abrirCadastro()">Cadastrar</button>
+    </div>
   </div>
 </nav>
 
@@ -108,9 +142,7 @@
     </div>
     <div class="card">
       <div class="section-title">Ranking por produto</div>
-      <div class="product-selector" id="product-selector">
-        <div class="loading">Carregando produtos...</div>
-      </div>
+      <div class="product-selector" id="product-selector"><div class="loading">Carregando produtos...</div></div>
       <div id="ranking-list"><div class="loading">Carregando preços...</div></div>
     </div>
   </div>
@@ -119,9 +151,7 @@
   <div id="section-encartes" class="section">
     <div class="card">
       <div class="section-title">Promoções da semana</div>
-      <div class="promo-grid" id="promo-grid">
-        <div class="loading">Carregando promoções...</div>
-      </div>
+      <div class="promo-grid" id="promo-grid"><div class="loading">Carregando promoções...</div></div>
     </div>
   </div>
 
@@ -130,16 +160,56 @@
     <div class="card">
       <div class="section-title">Flagrante de oferta — últimas 24h</div>
       <div id="flag-feed"><div class="loading">Carregando flagrantes...</div></div>
-      <button class="flagrante-cta" onclick="abrirModal()">📸 Flagrar uma oferta</button>
+      <button class="flagrante-cta" onclick="verificarFlagrante()">📸 Flagrar uma oferta</button>
     </div>
   </div>
 
 </div>
 
-<!-- MODAL -->
-<div class="modal-bg" id="modal">
+<!-- MODAL CADASTRO -->
+<div class="modal-bg" id="modal-cadastro">
+  <div class="modal">
+    <h3>Criar conta</h3>
+    <p>É gratuito e rápido!</p>
+    <label>Nome</label>
+    <input type="text" id="c-nome" placeholder="Seu nome" />
+    <label>E-mail</label>
+    <input type="email" id="c-email" placeholder="seu@email.com" />
+    <label>Senha</label>
+    <input type="password" id="c-senha" placeholder="Mínimo 6 caracteres" />
+    <div class="erro-msg" id="c-erro"></div>
+    <div class="sucesso-msg" id="c-sucesso"></div>
+    <div class="modal-btns">
+      <button class="btn-cancelar" onclick="fecharModais()">Cancelar</button>
+      <button class="btn-enviar" onclick="cadastrar()">Criar conta</button>
+    </div>
+    <div class="troca-modal">Já tem conta? <a onclick="trocarParaLogin()">Entrar</a></div>
+  </div>
+</div>
+
+<!-- MODAL LOGIN -->
+<div class="modal-bg" id="modal-login">
+  <div class="modal">
+    <h3>Entrar</h3>
+    <p>Bem-vindo de volta!</p>
+    <label>E-mail</label>
+    <input type="email" id="l-email" placeholder="seu@email.com" />
+    <label>Senha</label>
+    <input type="password" id="l-senha" placeholder="Sua senha" />
+    <div class="erro-msg" id="l-erro"></div>
+    <div class="modal-btns">
+      <button class="btn-cancelar" onclick="fecharModais()">Cancelar</button>
+      <button class="btn-enviar" onclick="entrar()">Entrar</button>
+    </div>
+    <div class="troca-modal">Não tem conta? <a onclick="trocarParaCadastro()">Cadastrar</a></div>
+  </div>
+</div>
+
+<!-- MODAL FLAGRANTE -->
+<div class="modal-bg" id="modal-flagrante">
   <div class="modal">
     <h3>📸 Flagrar uma oferta</h3>
+    <p>Compartilhe uma promoção relâmpago!</p>
     <label>Produto</label>
     <input type="text" id="f-produto" placeholder="ex: Cerveja Sul Americana 473ml" />
     <label>Supermercado</label>
@@ -158,37 +228,108 @@
     <label>Preço (R$)</label>
     <input type="number" id="f-preco" placeholder="ex: 2.99" step="0.01" />
     <div class="modal-btns">
-      <button class="btn-cancel" onclick="fecharModal()">Cancelar</button>
-      <button class="btn-send" onclick="enviarFlagrante()">Enviar flagrante</button>
+      <button class="btn-cancelar" onclick="fecharModais()">Cancelar</button>
+      <button class="btn-enviar" onclick="enviarFlagrante()">Enviar flagrante</button>
     </div>
   </div>
 </div>
 
 <script>
-  const SUPABASE_URL = 'https://hpeoyckeauayaobonbyi.supabase.co';
-  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhwZW95Y2tlYXVheWFvYm9uYnlpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc2ODgxODUsImV4cCI6MjA5MzI2NDE4NX0.un2peLk0Q7bHKymZRQE4G9m3800TYU3GY9hK2FFDylA';
-  const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  const URL_SB = 'https://hpeoyckeauayaobonbyi.supabase.co';
+  const CHAVE_SB = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhwZW95Y2tlYXVheWFvYm9uYnlpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc2ODgxODUsImV4cCI6MjA5MzI2NDE4NX0.un2peLk0Q7bHKymZRQE4G9m3800TYU3GY9hK2FFDylA';
+  const db = supabase.createClient(URL_SB, CHAVE_SB);
 
-  let todosPrecos = [];
   let todosProdutos = [];
-  let produtoAtivo = null;
+  let usuarioAtual = null;
 
-  async function init() {
+  // INICIAR
+  async function iniciar() {
+    const { data: { session } } = await db.auth.getSession();
+    if (session) usuarioAtual = session.user;
+    atualizarNavUsuario();
     await carregarStats();
     await carregarProdutos();
     await carregarPromos();
     await carregarFlagrantes();
   }
 
-  async function carregarStats() {
-    const { data: mercados } = await db.from('supermercados').select('id');
-    const { data: produtos } = await db.from('produtos').select('id');
-    const { data: promos } = await db.from('precos').select('id').eq('em_promocao', true);
-    document.getElementById('stat-mercados').textContent = mercados?.length || 0;
-    document.getElementById('stat-produtos').textContent = produtos?.length || 0;
-    document.getElementById('stat-promos').textContent = promos?.length || 0;
+  // USUARIO NAV
+  function atualizarNavUsuario() {
+    const area = document.getElementById('area-usuario');
+    if (usuarioAtual) {
+      const nome = usuarioAtual.user_metadata?.nome || usuarioAtual.email;
+      area.innerHTML = `
+        <div class="usuario-info">
+          Olá, <strong>${nome}</strong>
+          <button class="btn-sair" onclick="sair()">Sair</button>
+        </div>`;
+    } else {
+      area.innerHTML = `
+        <button class="btn-login" onclick="abrirLogin()">Entrar</button>
+        <button class="btn-cadastrar" onclick="abrirCadastro()">Cadastrar</button>`;
+    }
   }
 
+  // CADASTRO
+  async function cadastrar() {
+    const nome = document.getElementById('c-nome').value.trim();
+    const email = document.getElementById('c-email').value.trim();
+    const senha = document.getElementById('c-senha').value;
+    const erro = document.getElementById('c-erro');
+    const sucesso = document.getElementById('c-sucesso');
+    erro.style.display = 'none';
+    sucesso.style.display = 'none';
+    if (!nome || !email || !senha) { erro.textContent = 'Preencha todos os campos.'; erro.style.display = 'block'; return; }
+    if (senha.length < 6) { erro.textContent = 'A senha precisa ter pelo menos 6 caracteres.'; erro.style.display = 'block'; return; }
+    const { data, error } = await db.auth.signUp({ email, password: senha, options: { data: { nome } } });
+    if (error) { erro.textContent = 'Erro: ' + error.message; erro.style.display = 'block'; return; }
+    usuarioAtual = data.user;
+    sucesso.textContent = 'Conta criada com sucesso! Bem-vindo ao RioPreço! 🎉';
+    sucesso.style.display = 'block';
+    setTimeout(() => { fecharModais(); atualizarNavUsuario(); }, 2000);
+  }
+
+  // LOGIN
+  async function entrar() {
+    const email = document.getElementById('l-email').value.trim();
+    const senha = document.getElementById('l-senha').value;
+    const erro = document.getElementById('l-erro');
+    erro.style.display = 'none';
+    if (!email || !senha) { erro.textContent = 'Preencha todos os campos.'; erro.style.display = 'block'; return; }
+    const { data, error } = await db.auth.signInWithPassword({ email, password: senha });
+    if (error) { erro.textContent = 'E-mail ou senha incorretos.'; erro.style.display = 'block'; return; }
+    usuarioAtual = data.user;
+    fecharModais();
+    atualizarNavUsuario();
+  }
+
+  // SAIR
+  async function sair() {
+    await db.auth.signOut();
+    usuarioAtual = null;
+    atualizarNavUsuario();
+  }
+
+  // MODAIS
+  function abrirLogin() { fecharModais(); document.getElementById('modal-login').classList.add('open'); }
+  function abrirCadastro() { fecharModais(); document.getElementById('modal-cadastro').classList.add('open'); }
+  function fecharModais() {
+    document.querySelectorAll('.modal-bg').forEach(m => m.classList.remove('open'));
+  }
+  function trocarParaLogin() { abrirLogin(); }
+  function trocarParaCadastro() { abrirCadastro(); }
+
+  // STATS
+  async function carregarStats() {
+    const { data: m } = await db.from('supermercados').select('id');
+    const { data: p } = await db.from('produtos').select('id');
+    const { data: pr } = await db.from('precos').select('id').eq('em_promocao', true);
+    document.getElementById('stat-mercados').textContent = m?.length || 0;
+    document.getElementById('stat-produtos').textContent = p?.length || 0;
+    document.getElementById('stat-promos').textContent = pr?.length || 0;
+  }
+
+  // PRODUTOS
   async function carregarProdutos() {
     const { data } = await db.from('produtos').select('*');
     todosProdutos = data || [];
@@ -199,35 +340,27 @@
     if (todosProdutos.length > 0) await carregarRanking(todosProdutos[0].id);
   }
 
+  // RANKING
   async function carregarRanking(produtoId) {
-    produtoAtivo = produtoId;
     document.getElementById('ranking-list').innerHTML = '<div class="loading">Carregando preços...</div>';
-    const { data } = await db
-      .from('precos')
-      .select('preco, em_promocao, atualizado_em, supermercados(nome)')
-      .eq('produto_id', produtoId)
-      .order('preco', { ascending: true });
-
+    const { data } = await db.from('precos').select('preco, em_promocao, atualizado_em, supermercados(nome)').eq('produto_id', produtoId).order('preco', { ascending: true });
     const medalhas = ['gold','silver','bronze','',''];
     const produto = todosProdutos.find(p => p.id === produtoId);
     document.getElementById('ranking-list').innerHTML = (data||[]).map((item, i) => {
-      const atualizado = new Date(item.atualizado_em);
-      const hoje = new Date();
-      const diff = Math.floor((hoje - atualizado) / 86400000);
+      const diff = Math.floor((new Date() - new Date(item.atualizado_em)) / 86400000);
       const quando = diff === 0 ? 'atualizado hoje' : diff === 1 ? 'atualizado ontem' : `há ${diff} dias`;
       const atacado = item.supermercados.nome === 'Assaí';
-      return `
-        <div class="ranking-item">
-          <div class="rank-num ${medalhas[i]||''}">${i+1}</div>
-          <div class="rank-info">
-            <div class="rank-market">${item.supermercados.nome}
-              ${item.em_promocao ? '<span class="badge badge-promo">Promoção</span>' : ''}
-              ${atacado ? '<span class="badge badge-atacado">Atacado</span>' : ''}
-            </div>
-            <div class="rank-detail">${produto?.nome} ${produto?.unidade||''} — ${quando}</div>
+      return `<div class="ranking-item">
+        <div class="rank-num ${medalhas[i]||''}">${i+1}</div>
+        <div class="rank-info">
+          <div class="rank-market">${item.supermercados.nome}
+            ${item.em_promocao ? '<span class="badge badge-promo">Promoção</span>' : ''}
+            ${atacado ? '<span class="badge badge-atacado">Atacado</span>' : ''}
           </div>
-          <div class="rank-price">R$ ${Number(item.preco).toFixed(2).replace('.',',')}</div>
-        </div>`;
+          <div class="rank-detail">${produto?.nome} ${produto?.unidade||''} — ${quando}</div>
+        </div>
+        <div class="rank-price">R$ ${Number(item.preco).toFixed(2).replace('.',',')}</div>
+      </div>`;
     }).join('') || '<div class="loading">Nenhum preço encontrado.</div>';
   }
 
@@ -237,11 +370,9 @@
     await carregarRanking(id);
   }
 
+  // PROMOS
   async function carregarPromos() {
-    const { data } = await db
-      .from('precos')
-      .select('preco, produtos(nome, unidade), supermercados(nome)')
-      .eq('em_promocao', true);
+    const { data } = await db.from('precos').select('preco, produtos(nome, unidade), supermercados(nome)').eq('em_promocao', true);
     document.getElementById('promo-grid').innerHTML = (data||[]).map(item => `
       <div class="promo-card">
         <div class="promo-market">${item.supermercados.nome}</div>
@@ -250,32 +381,28 @@
       </div>`).join('') || '<div class="loading">Nenhuma promoção ativa.</div>';
   }
 
+  // FLAGRANTES
   async function carregarFlagrantes() {
-    const { data } = await db
-      .from('flagrantes')
-      .select('*')
-      .order('criado_em', { ascending: false })
-      .limit(20);
+    const { data } = await db.from('flagrantes').select('*').order('criado_em', { ascending: false }).limit(20);
     const emojis = ['🍺','🍪','🧴','🥩','🍗','🧀','🍎','🧹','☕'];
     const agora = new Date();
     document.getElementById('flag-feed').innerHTML = (data||[]).map(f => {
       const diff = Math.floor((agora - new Date(f.criado_em)) / 60000);
       const tempo = diff < 60 ? `há ${diff} min` : `há ${Math.floor(diff/60)}h`;
       const emoji = emojis[Math.floor(Math.random()*emojis.length)];
-      return `
-        <div class="flag-item">
-          <div class="flag-icon">${emoji}</div>
-          <div class="flag-info">
-            <div class="flag-product">${f.produto_nome}</div>
-            <div class="flag-local">${f.supermercado} — ${f.bairro}${f.endereco?' ('+f.endereco+')':''}</div>
-            <div class="flag-time">${tempo}</div>
-            <div class="confirm-row">
-              <button class="confirm-btn" onclick="confirmar(${f.id}, 'confirmacoes', this)">Ainda tá assim! (${f.confirmacoes})</button>
-              <button class="confirm-btn" onclick="confirmar(${f.id}, 'acabou', this)">Acabou (${f.acabou})</button>
-            </div>
+      return `<div class="flag-item">
+        <div class="flag-icon">${emoji}</div>
+        <div class="flag-info">
+          <div class="flag-product">${f.produto_nome}</div>
+          <div class="flag-local">${f.supermercado} — ${f.bairro}${f.endereco?' ('+f.endereco+')':''}</div>
+          <div class="flag-time">${tempo}</div>
+          <div class="confirm-row">
+            <button class="confirm-btn" onclick="confirmar(${f.id},'confirmacoes',this)">Ainda tá assim! (${f.confirmacoes})</button>
+            <button class="confirm-btn" onclick="confirmar(${f.id},'acabou',this)">Acabou (${f.acabou})</button>
           </div>
-          <div class="flag-price">R$ ${Number(f.preco).toFixed(2).replace('.',',')}</div>
-        </div>`;
+        </div>
+        <div class="flag-price">R$ ${Number(f.preco).toFixed(2).replace('.',',')}</div>
+      </div>`;
     }).join('') || '<div class="loading">Nenhum flagrante ainda. Seja o primeiro!</div>';
   }
 
@@ -286,8 +413,15 @@
     btn.textContent = btn.textContent.replace('('+atual+')', '('+(atual+1)+')');
   }
 
-  function abrirModal() { document.getElementById('modal').classList.add('open'); }
-  function fecharModal() { document.getElementById('modal').classList.remove('open'); }
+  function verificarFlagrante() {
+    if (!usuarioAtual) {
+      alert('Para flagrar uma oferta você precisa estar logado! 😊');
+      abrirCadastro();
+      return;
+    }
+    fecharModais();
+    document.getElementById('modal-flagrante').classList.add('open');
+  }
 
   async function enviarFlagrante() {
     const produto = document.getElementById('f-produto').value.trim();
@@ -298,29 +432,29 @@
     if (!produto || !mercado || !bairro || !preco) { alert('Preencha todos os campos obrigatórios!'); return; }
     const { error } = await db.from('flagrantes').insert([{ produto_nome: produto, supermercado: mercado, bairro, endereco, preco }]);
     if (error) { alert('Erro ao enviar. Tente novamente.'); return; }
-    fecharModal();
+    fecharModais();
     document.getElementById('f-produto').value = '';
     document.getElementById('f-mercado').value = '';
     document.getElementById('f-bairro').value = '';
     document.getElementById('f-endereco').value = '';
     document.getElementById('f-preco').value = '';
     await carregarFlagrantes();
-    showSection('flagrante');
+    mostrarSecao('flagrante');
     alert('Flagrante enviado! Obrigado! 🎉');
   }
 
-  function showSection(name) {
+  function mostrarSecao(nome) {
     document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-    document.getElementById('section-' + name).classList.add('active');
+    document.getElementById('section-' + nome).classList.add('active');
     document.querySelectorAll('.tab').forEach((t, i) => {
-      t.classList.toggle('active', ['ranking','encartes','flagrante'][i] === name);
+      t.classList.toggle('active', ['ranking','encartes','flagrante'][i] === nome);
     });
   }
 
   async function buscar() {
     const v = document.getElementById('searchInput').value.trim().toLowerCase();
     if (!v) return;
-    showSection('ranking');
+    mostrarSecao('ranking');
     const encontrado = todosProdutos.find(p => p.nome.toLowerCase().includes(v));
     if (encontrado) {
       document.querySelectorAll('.product-btn').forEach(b => {
@@ -332,7 +466,7 @@
     }
   }
 
-  init();
+  iniciar();
 </script>
 </body>
 </html>
