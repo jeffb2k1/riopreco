@@ -3,275 +3,446 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RioPreço — Administração</title>
+  <title>RioPreço — Comparador de Supermercados RJ</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f4f4f2; color: #1a1a1a; }
-    nav { background: #fff; border-bottom: 1px solid #e5e5e5; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; }
+
+    /* NAV */
+    nav { background: #fff; border-bottom: 1px solid #e5e5e5; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
     .logo { font-size: 20px; font-weight: 600; }
     .logo span { color: #1D9E75; }
-    .logo small { font-size: 13px; color: #888; font-weight: 400; margin-left: 8px; }
-    .main { max-width: 760px; margin: 24px auto; padding: 0 16px; }
-    .card { background: #fff; border-radius: 12px; border: 1px solid #e5e5e5; padding: 24px; margin-bottom: 20px; }
-    h2 { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
-    p { font-size: 13px; color: #888; margin-bottom: 20px; }
-    .upload-area { border: 2px dashed #ddd; border-radius: 10px; padding: 40px; text-align: center; cursor: pointer; transition: all 0.2s; }
-    .upload-area:hover { border-color: #1D9E75; background: #f0fdf8; }
-    .upload-area.arrastando { border-color: #1D9E75; background: #f0fdf8; }
-    .upload-icon { font-size: 40px; margin-bottom: 12px; }
-    .upload-texto { font-size: 15px; font-weight: 500; color: #1a1a1a; margin-bottom: 6px; }
-    .upload-sub { font-size: 13px; color: #888; }
-    input[type="file"] { display: none; }
-    .preview-img { max-width: 100%; border-radius: 8px; margin-top: 16px; display: none; }
-    .select-mercado { width: 100%; padding: 10px 14px; border-radius: 8px; border: 1px solid #ddd; font-size: 14px; margin-bottom: 16px; }
-    .select-mercado:focus { outline: none; border-color: #1D9E75; }
-    .btn-processar { width: 100%; padding: 13px; border-radius: 10px; border: none; background: #1D9E75; color: #fff; font-size: 15px; font-weight: 500; cursor: pointer; }
-    .btn-processar:hover { background: #0F6E56; }
-    .btn-processar:disabled { background: #aaa; cursor: not-allowed; }
-    .status { margin-top: 16px; padding: 14px; border-radius: 8px; font-size: 14px; display: none; }
-    .status.processando { background: #EFF6FF; color: #1D4ED8; display: block; }
-    .status.erro { background: #FAECE7; color: #993C1D; display: block; }
-    .status.sucesso { background: #E1F5EE; color: #0F6E56; display: block; }
-    .resultado { margin-top: 20px; display: none; }
-    .resultado h3 { font-size: 15px; font-weight: 600; margin-bottom: 14px; }
-    .produto-item { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 8px; border: 1px solid #e5e5e5; margin-bottom: 8px; background: #fff; }
-    .produto-item input { flex: 1; padding: 7px 10px; border-radius: 6px; border: 1px solid #ddd; font-size: 13px; }
-    .produto-item input:focus { outline: none; border-color: #1D9E75; }
-    .produto-nome { flex: 2; }
-    .produto-preco { flex: 1; }
-    .produto-check { width: 18px; height: 18px; cursor: pointer; }
-    .btn-salvar { width: 100%; padding: 13px; border-radius: 10px; border: none; background: #1D9E75; color: #fff; font-size: 15px; font-weight: 500; cursor: pointer; margin-top: 8px; }
-    .btn-salvar:hover { background: #0F6E56; }
-    .cabecalho-resultado { display: flex; gap: 8px; padding: 8px 12px; font-size: 12px; font-weight: 600; color: #888; text-transform: uppercase; }
-    .cabecalho-resultado .flex2 { flex: 2; }
-    .cabecalho-resultado .flex1 { flex: 1; }
-    .loading-dots::after { content: ''; animation: dots 1.5s infinite; }
-    @keyframes dots { 0%{content:'.'} 33%{content:'..'} 66%{content:'...'} }
+    .nav-direita { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .nav-tabs { display: flex; gap: 4px; flex-wrap: wrap; }
+    .tab { font-size: 13px; padding: 7px 16px; border-radius: 8px; border: 1px solid transparent; color: #666; cursor: pointer; background: none; }
+    .tab.active { background: #f0f0ee; border-color: #ddd; color: #1a1a1a; font-weight: 500; }
+    .tab:hover:not(.active) { background: #f9f9f7; }
+    .btn-login { font-size: 13px; padding: 7px 16px; border-radius: 8px; border: 1px solid #ddd; background: none; color: #666; cursor: pointer; }
+    .btn-login:hover { background: #f9f9f7; }
+    .btn-cadastrar { font-size: 13px; padding: 7px 16px; border-radius: 8px; border: none; background: #1D9E75; color: #fff; cursor: pointer; font-weight: 500; }
+    .usuario-info { font-size: 13px; color: #555; display: flex; align-items: center; gap: 10px; }
+    .btn-sair { font-size: 12px; padding: 5px 12px; border-radius: 8px; border: 1px solid #ddd; background: none; color: #888; cursor: pointer; }
+
+    /* SEARCH */
+    .search-bar { display: flex; gap: 10px; padding: 14px 20px; background: #eaeae8; border-bottom: 1px solid #ddd; }
+    .search-bar input { flex: 1; padding: 9px 14px; border-radius: 8px; border: 1px solid #ccc; background: #fff; font-size: 14px; }
+    .search-bar input:focus { outline: none; border-color: #1D9E75; }
+    .search-bar button { padding: 9px 22px; border-radius: 8px; border: none; background: #1D9E75; color: #fff; font-size: 14px; cursor: pointer; font-weight: 500; }
+
+    /* MAIN */
+    .main { max-width: 860px; margin: 24px auto; padding: 0 16px; }
+    .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
+    .stat-card { background: #fff; border-radius: 10px; border: 1px solid #e5e5e5; padding: 14px; text-align: center; }
+    .stat-val { font-size: 24px; font-weight: 600; }
+    .stat-lbl { font-size: 12px; color: #888; margin-top: 3px; }
+    .card { background: #fff; border-radius: 12px; border: 1px solid #e5e5e5; padding: 20px; margin-bottom: 16px; }
+    .section-title { font-size: 12px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 14px; }
+
+    /* PRODUTO */
+    .product-selector { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+    .product-btn { font-size: 13px; padding: 6px 14px; border-radius: 8px; border: 1px solid #ddd; background: none; color: #666; cursor: pointer; }
+    .product-btn.active { background: #E1F5EE; color: #0F6E56; border-color: #5DCAA5; font-weight: 500; }
+
+    /* RANKING */
+    .ranking-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid #f0f0ee; }
+    .ranking-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .rank-num { font-size: 20px; font-weight: 600; min-width: 30px; }
+    .gold { color: #BA7517; } .silver { color: #888; } .bronze { color: #993C1D; }
+    .rank-info { flex: 1; }
+    .rank-market { font-size: 15px; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+    .rank-detail { font-size: 12px; color: #888; margin-top: 3px; }
+    .rank-price { font-size: 18px; font-weight: 600; color: #0F6E56; }
+    .badge { font-size: 11px; padding: 3px 8px; border-radius: 6px; }
+    .badge-promo { background: #E1F5EE; color: #0F6E56; }
+    .badge-atacado { background: #FAECE7; color: #993C1D; }
+
+    /* ENCARTES */
+    .promo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+    .promo-card { background: #f9f9f7; border-radius: 10px; border: 1px solid #e5e5e5; padding: 14px; }
+    .promo-market { font-size: 11px; color: #888; margin-bottom: 5px; }
+    .promo-product { font-size: 14px; font-weight: 500; margin-bottom: 8px; }
+    .promo-price { font-size: 20px; font-weight: 600; color: #1D9E75; }
+
+    /* FLAGRANTE */
+    .flag-item { display: flex; gap: 12px; align-items: flex-start; padding: 14px 0; border-bottom: 1px solid #f0f0ee; }
+    .flag-item:last-child { border-bottom: none; }
+    .flag-icon { width: 42px; height: 42px; border-radius: 10px; background: #f0f0ee; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+    .flag-info { flex: 1; }
+    .flag-product { font-size: 14px; font-weight: 500; }
+    .flag-local { font-size: 12px; color: #888; margin-top: 3px; }
+    .flag-time { font-size: 11px; color: #aaa; margin-top: 3px; }
+    .flag-price { font-size: 18px; font-weight: 600; color: #1D9E75; white-space: nowrap; }
+    .confirm-row { display: flex; gap: 6px; margin-top: 8px; }
+    .confirm-btn { font-size: 12px; padding: 4px 10px; border-radius: 6px; border: 1px solid #ddd; background: none; color: #555; cursor: pointer; }
+    .confirm-btn:hover { background: #f0f0ee; }
+    .flagrante-cta { width: 100%; margin-top: 16px; padding: 13px; border-radius: 10px; background: #E1F5EE; border: 1px solid #5DCAA5; color: #0F6E56; font-size: 14px; font-weight: 500; cursor: pointer; }
+
+    /* SECOES */
+    .section { display: none; }
+    .section.active { display: block; }
+    .loading { text-align: center; color: #888; padding: 30px; font-size: 14px; }
+
+    /* MODAL GERAL */
+    .modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 100; align-items: center; justify-content: center; }
+    .modal-bg.open { display: flex; }
+    .modal { background: #fff; border-radius: 14px; padding: 24px; width: 100%; max-width: 400px; margin: 16px; }
+    .modal h3 { font-size: 17px; font-weight: 600; margin-bottom: 6px; }
+    .modal p { font-size: 13px; color: #888; margin-bottom: 18px; }
+    .modal label { font-size: 13px; color: #555; display: block; margin-bottom: 4px; margin-top: 12px; }
+    .modal input, .modal select { width: 100%; padding: 9px 12px; border-radius: 8px; border: 1px solid #ddd; font-size: 14px; }
+    .modal input:focus, .modal select:focus { outline: none; border-color: #1D9E75; }
+    .modal-btns { display: flex; gap: 8px; margin-top: 20px; }
+    .btn-cancelar { flex: 1; padding: 10px; border-radius: 8px; border: 1px solid #ddd; background: none; cursor: pointer; font-size: 14px; }
+    .btn-enviar { flex: 2; padding: 10px; border-radius: 8px; border: none; background: #1D9E75; color: #fff; cursor: pointer; font-size: 14px; font-weight: 500; }
+    .troca-modal { text-align: center; margin-top: 14px; font-size: 13px; color: #888; }
+    .troca-modal a { color: #1D9E75; cursor: pointer; text-decoration: none; font-weight: 500; }
+    .erro-msg { background: #FAECE7; color: #993C1D; border-radius: 8px; padding: 10px 14px; font-size: 13px; margin-top: 12px; display: none; }
+    .sucesso-msg { background: #E1F5EE; color: #0F6E56; border-radius: 8px; padding: 10px 14px; font-size: 13px; margin-top: 12px; display: none; }
+
+    @media (max-width: 600px) {
+      .stats-row { grid-template-columns: repeat(2, 1fr); }
+      nav { justify-content: center; }
+      .logo { width: 100%; text-align: center; }
+      .nav-direita { justify-content: center; }
+    }
   </style>
 </head>
 <body>
 
 <nav>
-  <div class="logo">Rio<span>Preço</span> <small>Administração</small></div>
-  <a href="/" style="font-size:13px;color:#888;text-decoration:none;">← Voltar ao site</a>
+  <div class="logo">Rio<span>Preço</span></div>
+  <div class="nav-direita">
+    <div class="nav-tabs">
+      <button class="tab active" onclick="mostrarSecao('ranking')">Ranking</button>
+      <button class="tab" onclick="mostrarSecao('encartes')">Encartes</button>
+      <button class="tab" onclick="mostrarSecao('flagrante')">Flagrante de Oferta</button>
+    </div>
+    <div id="area-usuario">
+      <button class="btn-login" onclick="abrirLogin()">Entrar</button>
+      <button class="btn-cadastrar" onclick="abrirCadastro()">Cadastrar</button>
+    </div>
+  </div>
 </nav>
+
+<div class="search-bar">
+  <input type="text" id="searchInput" placeholder="Buscar produto... ex: paleta bovina, arroz 5kg, banana" />
+  <button onclick="buscar()">Buscar</button>
+</div>
 
 <div class="main">
 
-  <div class="card">
-    <h2>📄 Processar encarte de supermercado</h2>
-    <p>Faça upload do encarte em imagem (JPG, PNG) ou PDF. A IA vai extrair todos os produtos e preços automaticamente.</p>
-
-    <select class="select-mercado" id="mercado">
-      <option value="">Selecione o supermercado...</option>
-      <option value="Guanabara">Guanabara</option>
-      <option value="Mundial">Mundial</option>
-      <option value="Extra">Extra</option>
-      <option value="Prezunic">Prezunic</option>
-      <option value="Assaí">Assaí</option>
-    </select>
-
-    <div class="upload-area" id="upload-area" onclick="document.getElementById('arquivo').click()"
-      ondragover="event.preventDefault();this.classList.add('arrastando')"
-      ondragleave="this.classList.remove('arrastando')"
-      ondrop="soltarArquivo(event)">
-      <div class="upload-icon">📂</div>
-      <div class="upload-texto" id="upload-texto">Clique para selecionar ou arraste o encarte aqui</div>
-      <div class="upload-sub">JPG, PNG ou PDF — até 10MB</div>
-      <img id="preview-img" class="preview-img" />
+  <!-- RANKING -->
+  <div id="section-ranking" class="section active">
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-val" id="stat-mercados">—</div><div class="stat-lbl">Supermercados</div></div>
+      <div class="stat-card"><div class="stat-val" id="stat-produtos">—</div><div class="stat-lbl">Produtos</div></div>
+      <div class="stat-card"><div class="stat-val" id="stat-promos">—</div><div class="stat-lbl">Promoções ativas</div></div>
+      <div class="stat-card"><div class="stat-val">RJ</div><div class="stat-lbl">Cobertura</div></div>
     </div>
-    <input type="file" id="arquivo" accept="image/*,application/pdf" onchange="selecionarArquivo(event)" />
-
-    <div class="status" id="status"></div>
-
-    <button class="btn-processar" id="btn-processar" onclick="processar()" style="margin-top:16px" disabled>
-      🤖 Processar com IA
-    </button>
+    <div class="card">
+      <div class="section-title">Ranking por produto</div>
+      <div class="product-selector" id="product-selector"><div class="loading">Carregando produtos...</div></div>
+      <div id="ranking-list"><div class="loading">Carregando preços...</div></div>
+    </div>
   </div>
 
-  <div class="resultado" id="resultado">
+  <!-- ENCARTES -->
+  <div id="section-encartes" class="section">
     <div class="card">
-      <h3 id="titulo-resultado">Produtos encontrados</h3>
-      <div class="cabecalho-resultado">
-        <div style="width:18px"></div>
-        <div class="flex2">Produto</div>
-        <div class="flex1">Preço (R$)</div>
-      </div>
-      <div id="lista-produtos"></div>
-      <button class="btn-salvar" onclick="salvarNoBanco()">💾 Salvar preços no banco de dados</button>
+      <div class="section-title">Promoções da semana</div>
+      <div class="promo-grid" id="promo-grid"><div class="loading">Carregando promoções...</div></div>
+    </div>
+  </div>
+
+  <!-- FLAGRANTE -->
+  <div id="section-flagrante" class="section">
+    <div class="card">
+      <div class="section-title">Flagrante de oferta — últimas 24h</div>
+      <div id="flag-feed"><div class="loading">Carregando flagrantes...</div></div>
+      <button class="flagrante-cta" onclick="verificarFlagrante()">📸 Flagrar uma oferta</button>
     </div>
   </div>
 
 </div>
 
+<!-- MODAL CADASTRO -->
+<div class="modal-bg" id="modal-cadastro">
+  <div class="modal">
+    <h3>Criar conta</h3>
+    <p>É gratuito e rápido!</p>
+    <label>Nome</label>
+    <input type="text" id="c-nome" placeholder="Seu nome" />
+    <label>E-mail</label>
+    <input type="email" id="c-email" placeholder="seu@email.com" />
+    <label>Senha</label>
+    <input type="password" id="c-senha" placeholder="Mínimo 6 caracteres" />
+    <div class="erro-msg" id="c-erro"></div>
+    <div class="sucesso-msg" id="c-sucesso"></div>
+    <div class="modal-btns">
+      <button class="btn-cancelar" onclick="fecharModais()">Cancelar</button>
+      <button class="btn-enviar" onclick="cadastrar()">Criar conta</button>
+    </div>
+    <div class="troca-modal">Já tem conta? <a onclick="trocarParaLogin()">Entrar</a></div>
+  </div>
+</div>
+
+<!-- MODAL LOGIN -->
+<div class="modal-bg" id="modal-login">
+  <div class="modal">
+    <h3>Entrar</h3>
+    <p>Bem-vindo de volta!</p>
+    <label>E-mail</label>
+    <input type="email" id="l-email" placeholder="seu@email.com" />
+    <label>Senha</label>
+    <input type="password" id="l-senha" placeholder="Sua senha" />
+    <div class="erro-msg" id="l-erro"></div>
+    <div class="modal-btns">
+      <button class="btn-cancelar" onclick="fecharModais()">Cancelar</button>
+      <button class="btn-enviar" onclick="entrar()">Entrar</button>
+    </div>
+    <div class="troca-modal">Não tem conta? <a onclick="trocarParaCadastro()">Cadastrar</a></div>
+  </div>
+</div>
+
+<!-- MODAL FLAGRANTE -->
+<div class="modal-bg" id="modal-flagrante">
+  <div class="modal">
+    <h3>📸 Flagrar uma oferta</h3>
+    <p>Compartilhe uma promoção relâmpago!</p>
+    <label>Produto</label>
+    <input type="text" id="f-produto" placeholder="ex: Cerveja Sul Americana 473ml" />
+    <label>Supermercado</label>
+    <select id="f-mercado">
+      <option value="">Selecione...</option>
+      <option>Extra</option>
+      <option>Guanabara</option>
+      <option>Mundial</option>
+      <option>Prezunic</option>
+      <option>Assaí</option>
+    </select>
+    <label>Bairro</label>
+    <input type="text" id="f-bairro" placeholder="ex: Tijuca" />
+    <label>Endereço (opcional)</label>
+    <input type="text" id="f-endereco" placeholder="ex: Conde de Bonfim" />
+    <label>Preço (R$)</label>
+    <input type="number" id="f-preco" placeholder="ex: 2.99" step="0.01" />
+    <div class="modal-btns">
+      <button class="btn-cancelar" onclick="fecharModais()">Cancelar</button>
+      <button class="btn-enviar" onclick="enviarFlagrante()">Enviar flagrante</button>
+    </div>
+  </div>
+</div>
+
 <script>
   const URL_SB = 'https://hpeoyckeauayaobonbyi.supabase.co';
   const CHAVE_SB = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhwZW95Y2tlYXVheWFvYm9uYnlpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc2ODgxODUsImV4cCI6MjA5MzI2NDE4NX0.un2peLk0Q7bHKymZRQE4G9m3800TYU3GY9hK2FFDylA';
-  const CHAVE_ANTHROPIC = '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';
   const db = supabase.createClient(URL_SB, CHAVE_SB);
 
-  let arquivoBase64 = null;
-  let tipoArquivo = null;
-  let produtosExtraidos = [];
+  let todosProdutos = [];
+  let usuarioAtual = null;
 
-  function selecionarArquivo(e) {
-    const arquivo = e.target.files[0];
-    if (arquivo) processarArquivo(arquivo);
+  async function iniciar() {
+    const { data: { session } } = await db.auth.getSession();
+    if (session) usuarioAtual = session.user;
+    atualizarNavUsuario();
+    await carregarStats();
+    await carregarProdutos();
+    await carregarPromos();
+    await carregarFlagrantes();
   }
 
-  function soltarArquivo(e) {
-    e.preventDefault();
-    document.getElementById('upload-area').classList.remove('arrastando');
-    const arquivo = e.dataTransfer.files[0];
-    if (arquivo) processarArquivo(arquivo);
+  function atualizarNavUsuario() {
+    const area = document.getElementById('area-usuario');
+    if (usuarioAtual) {
+      const nome = usuarioAtual.user_metadata?.nome || usuarioAtual.email;
+      area.innerHTML = `<div class="usuario-info">Olá, <strong>${nome}</strong><button class="btn-sair" onclick="sair()">Sair</button></div>`;
+    } else {
+      area.innerHTML = `<button class="btn-login" onclick="abrirLogin()">Entrar</button><button class="btn-cadastrar" onclick="abrirCadastro()">Cadastrar</button>`;
+    }
   }
 
-  function processarArquivo(arquivo) {
-    tipoArquivo = arquivo.type;
-    document.getElementById('upload-texto').textContent = arquivo.name;
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      arquivoBase64 = e.target.result.split(',')[1];
-      if (arquivo.type.startsWith('image/')) {
-        const img = document.getElementById('preview-img');
-        img.src = e.target.result;
-        img.style.display = 'block';
-      }
-      verificarBotao();
-    };
-    reader.readAsDataURL(arquivo);
+  async function cadastrar() {
+    const nome = document.getElementById('c-nome').value.trim();
+    const email = document.getElementById('c-email').value.trim();
+    const senha = document.getElementById('c-senha').value;
+    const erro = document.getElementById('c-erro');
+    const sucesso = document.getElementById('c-sucesso');
+    erro.style.display = 'none'; sucesso.style.display = 'none';
+    if (!nome || !email || !senha) { erro.textContent = 'Preencha todos os campos.'; erro.style.display = 'block'; return; }
+    if (senha.length < 6) { erro.textContent = 'A senha precisa ter pelo menos 6 caracteres.'; erro.style.display = 'block'; return; }
+    const { data, error } = await db.auth.signUp({ email, password: senha, options: { data: { nome } } });
+    if (error) { erro.textContent = 'Erro: ' + error.message; erro.style.display = 'block'; return; }
+    usuarioAtual = data.user;
+    sucesso.textContent = 'Conta criada com sucesso! Bem-vindo ao RioPreço! 🎉';
+    sucesso.style.display = 'block';
+    setTimeout(() => { fecharModais(); atualizarNavUsuario(); }, 2000);
   }
 
-  function verificarBotao() {
-    const mercado = document.getElementById('mercado').value;
-    document.getElementById('btn-processar').disabled = !(arquivoBase64 && mercado);
+  async function entrar() {
+    const email = document.getElementById('l-email').value.trim();
+    const senha = document.getElementById('l-senha').value;
+    const erro = document.getElementById('l-erro');
+    erro.style.display = 'none';
+    if (!email || !senha) { erro.textContent = 'Preencha todos os campos.'; erro.style.display = 'block'; return; }
+    const { data, error } = await db.auth.signInWithPassword({ email, password: senha });
+    if (error) { erro.textContent = 'E-mail ou senha incorretos.'; erro.style.display = 'block'; return; }
+    usuarioAtual = data.user;
+    fecharModais();
+    atualizarNavUsuario();
   }
 
-  document.getElementById('mercado').addEventListener('change', verificarBotao);
+  async function sair() {
+    await db.auth.signOut();
+    usuarioAtual = null;
+    atualizarNavUsuario();
+  }
 
-  async function processar() {
-    const mercado = document.getElementById('mercado').value;
-    const status = document.getElementById('status');
-    status.className = 'status processando';
-    status.innerHTML = '🤖 Processando encarte com IA<span class="loading-dots"></span>';
-    document.getElementById('btn-processar').disabled = true;
-    document.getElementById('resultado').style.display = 'none';
+  function abrirLogin() { fecharModais(); document.getElementById('modal-login').classList.add('open'); }
+  function abrirCadastro() { fecharModais(); document.getElementById('modal-cadastro').classList.add('open'); }
+  function fecharModais() { document.querySelectorAll('.modal-bg').forEach(m => m.classList.remove('open')); }
+  function trocarParaLogin() { abrirLogin(); }
+  function trocarParaCadastro() { abrirCadastro(); }
 
-    try {
-      const mediaType = tipoArquivo === 'application/pdf' ? 'application/pdf' : tipoArquivo;
-      const tipo = tipoArquivo === 'application/pdf' ? 'document' : 'image';
+  async function carregarStats() {
+    const { data: m } = await db.from('supermercados').select('id');
+    const { data: p } = await db.from('produtos').select('id');
+    const { data: pr } = await db.from('precos').select('id').eq('em_promocao', true);
+    document.getElementById('stat-mercados').textContent = m?.length || 0;
+    document.getElementById('stat-produtos').textContent = p?.length || 0;
+    document.getElementById('stat-promos').textContent = pr?.length || 0;
+  }
 
-      const resposta = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': CHAVE_ANTHROPIC,
-          'anthropic-version': '2023-06-01',
-          'anthropic-dangerous-direct-browser-access': 'true'
-        },
-        body: JSON.stringify({
-          model: 'claude-opus-4-5',
-          max_tokens: 2000,
-          messages: [{
-            role: 'user',
-            content: [
-              {
-                type: tipo,
-                source: { type: 'base64', media_type: mediaType, data: arquivoBase64 }
-              },
-              {
-                type: 'text',
-                text: `Este é um encarte do supermercado ${mercado}. Extraia TODOS os produtos e preços que encontrar. Responda APENAS em JSON válido, sem texto adicional, no formato: {"produtos": [{"nome": "Nome do produto com quantidade/peso", "preco": 0.00, "em_promocao": true}]}. Inclua todos os produtos visíveis. Preço deve ser número decimal. em_promocao deve ser true para todos pois estão no encarte.`
-              }
-            ]
-          }]
-        })
-      });
+  async function carregarProdutos() {
+    const { data } = await db.from('produtos').select('*');
+    todosProdutos = data || [];
+    const sel = document.getElementById('product-selector');
+    sel.innerHTML = todosProdutos.map((p, i) =>
+      `<button class="product-btn ${i===0?'active':''}" onclick="selectProduct(this,${p.id})">${p.nome}</button>`
+    ).join('');
+    if (todosProdutos.length > 0) await carregarRanking(todosProdutos[0].id);
+  }
 
-      const dados = await resposta.json();
-
-      if (dados.error) throw new Error(dados.error.message);
-
-      const texto = dados.content[0].text.trim();
-      const json = JSON.parse(texto.replace(/```json|```/g, '').trim());
-      produtosExtraidos = json.produtos || [];
-
-      if (produtosExtraidos.length === 0) throw new Error('Nenhum produto encontrado no encarte.');
-
-      status.className = 'status sucesso';
-      status.textContent = `✅ ${produtosExtraidos.length} produtos encontrados! Revise abaixo e salve no banco.`;
-
-      document.getElementById('titulo-resultado').textContent = `${produtosExtraidos.length} produtos encontrados — ${mercado}`;
-      document.getElementById('lista-produtos').innerHTML = produtosExtraidos.map((p, i) => `
-        <div class="produto-item">
-          <input type="checkbox" class="produto-check" id="check-${i}" checked />
-          <input type="text" class="produto-nome" id="nome-${i}" value="${p.nome}" />
-          <input type="number" class="produto-preco" id="preco-${i}" value="${p.preco}" step="0.01" />
+  async function carregarRanking(produtoId) {
+    document.getElementById('ranking-list').innerHTML = '<div class="loading">Carregando preços...</div>';
+    const { data } = await db.from('precos').select('preco, em_promocao, atualizado_em, supermercados(nome)').eq('produto_id', produtoId).order('preco', { ascending: true });
+    const medalhas = ['gold','silver','bronze','',''];
+    const produto = todosProdutos.find(p => p.id === produtoId);
+    document.getElementById('ranking-list').innerHTML = (data||[]).map((item, i) => {
+      const diff = Math.floor((new Date() - new Date(item.atualizado_em)) / 86400000);
+      const quando = diff === 0 ? 'atualizado hoje' : diff === 1 ? 'atualizado ontem' : `há ${diff} dias`;
+      const atacado = item.supermercados.nome === 'Assaí';
+      return `<div class="ranking-item">
+        <div class="rank-num ${medalhas[i]||''}">${i+1}</div>
+        <div class="rank-info">
+          <div class="rank-market">${item.supermercados.nome}
+            ${item.em_promocao ? '<span class="badge badge-promo">Promoção</span>' : ''}
+            ${atacado ? '<span class="badge badge-atacado">Atacado</span>' : ''}
+          </div>
+          <div class="rank-detail">${produto?.nome} ${produto?.unidade||''} — ${quando}</div>
         </div>
-      `).join('');
-      document.getElementById('resultado').style.display = 'block';
-
-    } catch (erro) {
-      status.className = 'status erro';
-      status.textContent = '❌ Erro: ' + erro.message;
-    }
-
-    document.getElementById('btn-processar').disabled = false;
+        <div class="rank-price">R$ ${Number(item.preco).toFixed(2).replace('.',',')}</div>
+      </div>`;
+    }).join('') || '<div class="loading">Nenhum preço encontrado.</div>';
   }
 
-  async function salvarNoBanco() {
-    const mercado = document.getElementById('mercado').value;
-    const status = document.getElementById('status');
-    status.className = 'status processando';
-    status.innerHTML = '💾 Salvando no banco de dados<span class="loading-dots"></span>';
+  async function selectProduct(btn, id) {
+    document.querySelectorAll('.product-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    await carregarRanking(id);
+  }
 
-    try {
-      // Buscar ou criar supermercado
-      let { data: supData } = await db.from('supermercados').select('id').eq('nome', mercado).single();
-      if (!supData) {
-        const { data: novoSup } = await db.from('supermercados').insert([{ nome: mercado }]).select().single();
-        supData = novoSup;
-      }
-      const supId = supData.id;
+  async function carregarPromos() {
+    const { data } = await db.from('precos').select('preco, produtos(nome, unidade), supermercados(nome)').eq('em_promocao', true);
+    document.getElementById('promo-grid').innerHTML = (data||[]).map(item => `
+      <div class="promo-card">
+        <div class="promo-market">${item.supermercados.nome}</div>
+        <div class="promo-product">${item.produtos.nome} ${item.produtos.unidade||''}</div>
+        <div><span class="promo-price">R$ ${Number(item.preco).toFixed(2).replace('.',',')}</span></div>
+      </div>`).join('') || '<div class="loading">Nenhuma promoção ativa.</div>';
+  }
 
-      let salvos = 0;
-      const total = produtosExtraidos.length;
+  async function carregarFlagrantes() {
+    const { data } = await db.from('flagrantes').select('*').order('criado_em', { ascending: false }).limit(20);
+    const emojis = ['🍺','🍪','🧴','🥩','🍗','🧀','🍎','🧹','☕'];
+    const agora = new Date();
+    document.getElementById('flag-feed').innerHTML = (data||[]).map(f => {
+      const diff = Math.floor((agora - new Date(f.criado_em)) / 60000);
+      const tempo = diff < 60 ? `há ${diff} min` : `há ${Math.floor(diff/60)}h`;
+      const emoji = emojis[Math.floor(Math.random()*emojis.length)];
+      return `<div class="flag-item">
+        <div class="flag-icon">${emoji}</div>
+        <div class="flag-info">
+          <div class="flag-product">${f.produto_nome}</div>
+          <div class="flag-local">${f.supermercado} — ${f.bairro}${f.endereco?' ('+f.endereco+')':''}</div>
+          <div class="flag-time">${tempo}</div>
+          <div class="confirm-row">
+            <button class="confirm-btn" onclick="confirmar(${f.id},'confirmacoes',this)">Ainda tá assim! (${f.confirmacoes})</button>
+            <button class="confirm-btn" onclick="confirmar(${f.id},'acabou',this)">Acabou (${f.acabou})</button>
+          </div>
+        </div>
+        <div class="flag-price">R$ ${Number(f.preco).toFixed(2).replace('.',',')}</div>
+      </div>`;
+    }).join('') || '<div class="loading">Nenhum flagrante ainda. Seja o primeiro!</div>';
+  }
 
-      for (let i = 0; i < total; i++) {
-        const check = document.getElementById(`check-${i}`);
-        if (!check.checked) continue;
-        const nome = document.getElementById(`nome-${i}`).value.trim();
-        const preco = parseFloat(document.getElementById(`preco-${i}`).value);
-        if (!nome || !preco) continue;
+  async function confirmar(id, campo, btn) {
+    const m = btn.textContent.match(/\((\d+)\)/);
+    const atual = m ? parseInt(m[1]) : 0;
+    await db.from('flagrantes').update({ [campo]: atual + 1 }).eq('id', id);
+    btn.textContent = btn.textContent.replace('('+atual+')', '('+(atual+1)+')');
+  }
 
-        // Buscar ou criar produto
-        let { data: prodData } = await db.from('produtos').select('id').eq('nome', nome).single();
-        if (!prodData) {
-          const { data: novoProd } = await db.from('produtos').insert([{ nome, categoria: 'Encarte', unidade: '' }]).select().single();
-          prodData = novoProd;
-        }
-        const prodId = prodData.id;
+  function verificarFlagrante() {
+    if (!usuarioAtual) { alert('Para flagrar uma oferta você precisa estar logado! 😊'); abrirCadastro(); return; }
+    fecharModais();
+    document.getElementById('modal-flagrante').classList.add('open');
+  }
 
-        // Inserir ou atualizar preço
-        const { data: precoExist } = await db.from('precos').select('id').eq('produto_id', prodId).eq('supermercado_id', supId).single();
-        if (precoExist) {
-          await db.from('precos').update({ preco, em_promocao: true, atualizado_em: new Date() }).eq('id', precoExist.id);
-        } else {
-          await db.from('precos').insert([{ produto_id: prodId, supermercado_id: supId, preco, em_promocao: true }]);
-        }
-        salvos++;
-      }
+  async function enviarFlagrante() {
+    const produto = document.getElementById('f-produto').value.trim();
+    const mercado = document.getElementById('f-mercado').value;
+    const bairro = document.getElementById('f-bairro').value.trim();
+    const endereco = document.getElementById('f-endereco').value.trim();
+    const preco = parseFloat(document.getElementById('f-preco').value);
+    if (!produto || !mercado || !bairro || !preco) { alert('Preencha todos os campos obrigatórios!'); return; }
+    const { error } = await db.from('flagrantes').insert([{ produto_nome: produto, supermercado: mercado, bairro, endereco, preco }]);
+    if (error) { alert('Erro ao enviar. Tente novamente.'); return; }
+    fecharModais();
+    document.getElementById('f-produto').value = '';
+    document.getElementById('f-mercado').value = '';
+    document.getElementById('f-bairro').value = '';
+    document.getElementById('f-endereco').value = '';
+    document.getElementById('f-preco').value = '';
+    await carregarFlagrantes();
+    mostrarSecao('flagrante');
+    alert('Flagrante enviado! Obrigado! 🎉');
+  }
 
-      status.className = 'status sucesso';
-      status.textContent = `✅ ${salvos} preços salvos com sucesso no banco de dados! Já aparecem no site.`;
-      document.getElementById('resultado').style.display = 'none';
+  function mostrarSecao(nome) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.getElementById('section-' + nome).classList.add('active');
+    document.querySelectorAll('.tab').forEach((t, i) => {
+      t.classList.toggle('active', ['ranking','encartes','flagrante'][i] === nome);
+    });
+  }
 
-    } catch (erro) {
-      status.className = 'status erro';
-      status.textContent = '❌ Erro ao salvar: ' + erro.message;
+  async function buscar() {
+    const v = document.getElementById('searchInput').value.trim().toLowerCase();
+    if (!v) return;
+    mostrarSecao('ranking');
+    const encontrado = todosProdutos.find(p => p.nome.toLowerCase().includes(v));
+    if (encontrado) {
+      document.querySelectorAll('.product-btn').forEach(b => {
+        b.classList.toggle('active', b.textContent.toLowerCase().includes(v));
+      });
+      await carregarRanking(encontrado.id);
+    } else {
+      document.getElementById('ranking-list').innerHTML = '<div class="loading">Produto não encontrado. Tente outro nome.</div>';
     }
   }
+
+  iniciar();
 </script>
 </body>
 </html>
